@@ -42,15 +42,20 @@ jobs:
       - name: Deploy on server
         run: |
           ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
-            << 'EOF'
-            cd /home/admin.rojgariindia.com
-            rm -rf current new_release
-            mkdir new_release
-            tar -xzf ${RELEASE_NAME} -C new_release
-            mv public_html backup_$(date +%s)
-            mv new_release public_html
-            chown -R admin7509:admin7509 public_html
-            chmod -R 755 public_html
-            rm -f ${RELEASE_NAME}
-            EOF
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+          cd /home/admin.rojgariindia.com || exit 1
+
+          rm -rf new_release
+          mkdir -p new_release
+
+          tar -xzf ${RELEASE_NAME} -C new_release
+
+          rm -rf public_html_backup
+          mv public_html public_html_backup || true
+          mv new_release public_html
+
+          chown -R admin7509:admin7509 public_html
+          chmod -R 755 public_html
+
+          rm -f ${RELEASE_NAME}
+          "
