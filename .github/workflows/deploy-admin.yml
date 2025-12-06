@@ -10,7 +10,8 @@ jobs:
 
     env:
       RELEASE_NAME: release-${{ github.run_id }}-${{ github.run_number }}.tgz
-      SERVER_DIR: /home/admin   # directory where we upload the release
+      SERVER_DIR: /home/admin.rojgariindia.com   # ✅ correct base directory
+      WEB_ROOT: /home/admin.rojgariindia.com/public_html
 
     steps:
       - name: Checkout code
@@ -42,4 +43,14 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
-            "./deploy-admin-php.sh ${RELEASE_NAME}"
+            << 'EOF'
+            cd /home/admin.rojgariindia.com
+            rm -rf current new_release
+            mkdir new_release
+            tar -xzf ${RELEASE_NAME} -C new_release
+            mv public_html backup_$(date +%s)
+            mv new_release public_html
+            chown -R admin7509:admin7509 public_html
+            chmod -R 755 public_html
+            rm -f ${RELEASE_NAME}
+            EOF
