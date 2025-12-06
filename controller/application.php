@@ -114,3 +114,4 @@ class Application extends Databaseclass
     }
 }
 ?>
+EOF
