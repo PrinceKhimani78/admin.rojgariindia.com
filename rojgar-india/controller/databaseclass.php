@@ -6,93 +6,115 @@ define("DBPASSWORD", 'Hitesh@123');
 
 class Databaseclass
 {
+    public $dbpdo; // ✅ FIX: prevents PHP 8.2 dynamic property warning
+
     function __construct()
     { 
-        $this->connectdb(HOST,DBNAME,DBUSER,DBPASSWORD);
+        $this->connectdb(HOST, DBNAME, DBUSER, DBPASSWORD);
     }
 
-    public function connectdb($host,$dbname,$dbuser,$dbpassword)
+    public function connectdb($host, $dbname, $dbuser, $dbpassword)
     {
-        $this->dbpdo = new PDO('mysql:host='.$host.';dbname='.$dbname, $dbuser, $dbpassword) or die("Error Connecting to The Database");
+        try {
+            $this->dbpdo = new PDO(
+                'mysql:host=' . $host . ';dbname=' . $dbname,
+                $dbuser,
+                $dbpassword
+            );
+            $this->dbpdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Database Connection Failed: " . $e->getMessage());
+        }
     }
 
-    public function select($fields,$tablename,$conditions='',$find = '')
+    public function select($fields, $tablename, $conditions = '', $find = '')
     {
-        $whereclause="";
-        if($conditions != "")
-        {
-            foreach($conditions as $key=>$value) :
-                $whereclause.=$key."='".$value."' AND ";
-            endforeach;
-            $whereclause=trim($whereclause," AND ");
-            $whereclause = ' where '.$whereclause;
+        $whereclause = "";
+
+        if ($conditions != "") {
+            foreach ($conditions as $key => $value) {
+                $whereclause .= $key . "='" . $value . "' AND ";
+            }
+            $whereclause = trim($whereclause, " AND ");
+            $whereclause = ' WHERE ' . $whereclause;
         }
 
-        ($fields[0]=="all") ? $fields="*" : $fields=implode(",",$fields);
-        $qry="select ".$fields." from ".$tablename." ".$whereclause;
-        //echo $qry;exit;
-        $data=$this->dbpdo->prepare($qry);
-        $data->execute();
-        if($find == 'first')
-            $data_recieved = $data->fetch(PDO::FETCH_ASSOC);
-        else
-            $data_recieved = $data->fetchAll(PDO::FETCH_ASSOC);
+        ($fields[0] == "all") ? $fields = "*" : $fields = implode(",", $fields);
 
-        $result=$data_recieved;
-        return $result;
+        $qry = "SELECT " . $fields . " FROM " . $tablename . " " . $whereclause;
+
+        $data = $this->dbpdo->prepare($qry);
+        $data->execute();
+
+        if ($find == 'first')
+            return $data->fetch(PDO::FETCH_ASSOC);
+        else
+            return $data->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function selectcustom($query,$find = '')
+    public function selectcustom($query, $find = '')
     {
-        $data=$this->dbpdo->prepare($query);
+        $data = $this->dbpdo->prepare($query);
         $data->execute();
-        if($find == 'first')
-            $data_recieved = $data->fetch(PDO::FETCH_ASSOC);
-        else
-            $data_recieved = $data->fetchAll(PDO::FETCH_ASSOC);
 
-        $result=$data_recieved;
-        return $result;
+        if ($find == 'first')
+            return $data->fetch(PDO::FETCH_ASSOC);
+        else
+            return $data->fetchAll(PDO::FETCH_ASSOC);
     }
-    function insert($fields='',$dataparams='',$tablename='')
+
+    function insert($fields = '', $dataparams = '', $tablename = '')
     {
-        $fields=implode(",",$fields);
-        $dataparams=implode('","',$dataparams);
-        $qry='insert into '.$tablename.' ('.$fields.') VALUES("'.$dataparams.'")';
-        //echo $qry;exit;
-        $data=$this->dbpdo->prepare($qry);
+        $fields = implode(",", $fields);
+        $dataparams = implode('","', $dataparams);
+
+        $qry = 'INSERT INTO ' . $tablename . ' (' . $fields . ') VALUES("' . $dataparams . '")';
+
+        $data = $this->dbpdo->prepare($qry);
         $data->execute();
+
         return $this->dbpdo->lastInsertId(); 
     }
-    function update($fields='',$dataparams='',$tablename='',$conditions = array())
+
+    function update($fields = '', $dataparams = '', $tablename = '', $conditions = array())
     {
-        $whereclause="";
-        foreach($conditions as $key=>$value)
-        {
-            $whereclause.=$key."='".$value."' AND ";
+        $whereclause = "";
+
+        foreach ($conditions as $key => $value) {
+            $whereclause .= $key . "='" . $value . "' AND ";
         }
-        $whereclause=trim($whereclause," AND ");
+
+        $whereclause = trim($whereclause, " AND ");
+
         $add_qry = '';
-        foreach($fields as $key=>$value)
-        {
+
+        foreach ($fields as $key => $value) {
            $add_qry .= $value . " = '" . $dataparams[$key] . "', ";
         }
-        $add_qry = trim($add_qry,', ');
-        $qry='update '.$tablename.' set ' . $add_qry . ' where '.$whereclause;
-        $data=$this->dbpdo->prepare($qry);
+
+        $add_qry = trim($add_qry, ', ');
+
+        $qry = 'UPDATE ' . $tablename . ' SET ' . $add_qry . ' WHERE ' . $whereclause;
+
+        $data = $this->dbpdo->prepare($qry);
         $data->execute();
+
         return $data->rowCount();
     }
-    function delete($tablename,$conditions = array())
+
+    function delete($tablename, $conditions = array())
     {
         $whereclause = '';
-        foreach($conditions as $key=>$value)
-        {
-            $whereclause.=$key."='".$value."' AND ";
+
+        foreach ($conditions as $key => $value) {
+            $whereclause .= $key . "='" . $value . "' AND ";
         }
-        $whereclause=trim($whereclause," AND ");
-        $qry = 'delete from '.$tablename.' where '.$whereclause;
-        $data=$this->dbpdo->prepare($qry);
+
+        $whereclause = trim($whereclause, " AND ");
+
+        $qry = 'DELETE FROM ' . $tablename . ' WHERE ' . $whereclause;
+
+        $data = $this->dbpdo->prepare($qry);
         $data->execute();
     }
 }
