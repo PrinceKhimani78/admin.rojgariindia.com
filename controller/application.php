@@ -1,5 +1,6 @@
 <?php
-include('databaseclass.php');
+require_once $_SERVER['DOCUMENT_ROOT'] . "/rojgar-india/controller/databaseclass.php";
+
 class Application extends Databaseclass
 {
     function __construct()
@@ -192,7 +193,7 @@ class Application extends Databaseclass
             "9"=>"Ir",
             "0"=>"Pt",
             "!"=>"Au",
-            "£"=>"Hg",
+            "ï¿½"=>"Hg",
             "$"=>"Tl",
             "%"=>"Pb",
             "^"=>"Bi",
@@ -205,7 +206,7 @@ class Application extends Databaseclass
             "="=>"Db",
             "+"=>"Sg",
             "`"=>"Bh",
-            "¬"=>"Hs",
+            "ï¿½"=>"Hs",
             ""=>"Mt",
             ","=>"Ds",
             "<"=>"Rg",
