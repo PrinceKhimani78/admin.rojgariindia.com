@@ -1,0 +1,45 @@
+name: Deploy PHP Admin Panel
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      RELEASE_NAME: release-${{ github.run_id }}-${{ github.run_number }}.tgz
+      SERVER_DIR: /home/admin   # directory where we upload the release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Package PHP release
+        run: |
+          mkdir -p artifacts
+          tar --no-xattrs --no-acls --warning=no-unknown-keyword \
+            --exclude='.git' \
+            --exclude='artifacts' \
+            --exclude='.github' \
+            -czf "artifacts/${RELEASE_NAME}" .
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Upload artifact to server
+        run: |
+          rsync -avz -e "ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes" \
+            "artifacts/${RELEASE_NAME}" \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${SERVER_DIR}/"
+
+      - name: Deploy on server
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            "./deploy-admin-php.sh ${RELEASE_NAME}"
