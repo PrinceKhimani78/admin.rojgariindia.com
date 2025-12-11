@@ -138,4 +138,11 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 rojgar-india/plugins/mailer/test2.php
-rojgar-india/plugins/mailer/test2.php
+
+# Test and setup scripts
+setup_macbook.sh
+test_api.sh
+
+# Uploaded files (profile photos, resumes, etc.)
+uploads/**
+!uploads/.gitkeep

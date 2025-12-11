@@ -2,7 +2,9 @@
 define("HOST", 'localhost');
 define("DBNAME", 'admin_rojgari');
 define("DBUSER", 'admin_rojgari');
-define("DBPASSWORD", 'Hitesh@123');
+// define("DBPASSWORD", 'Hitesh@123');
+// Use your actual database password here
+define("DBPASSWORD", 'admin@123');
 
 class Databaseclass
 {

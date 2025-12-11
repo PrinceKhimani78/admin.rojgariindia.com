@@ -1,6 +1,10 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/rojgar-india/controller/databaseclass.php";
+// Use absolute path to include Databaseclass.php
+
+// require_once $_SERVER['DOCUMENT_ROOT'] . "/rojgar-india/controller/databaseclass.php";
+
+require_once $_SERVER['DOCUMENT_ROOT'] . "/admin.rojgariindia.com/rojgar-india/controller/databaseclass.php";
 
 class Application extends Databaseclass
 {

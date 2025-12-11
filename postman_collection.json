@@ -1,0 +1,205 @@
+{
+  "info": {
+    "name": "Rojgari India - Candidate Profile API",
+    "description": "Complete API collection for Candidate Profile Management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost/admin.rojgariindia.com/api",
+      "type": "string"
+    },
+    {
+      "key": "candidate_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Create Candidate Profile",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"John Doe\",\n  \"surname\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"mobile_number\": \"9876543210\",\n  \"gender\": \"Male\",\n  \"date_of_birth\": \"1995-05-15\",\n  \"address\": \"123 Main Street\",\n  \"country\": \"India\",\n  \"state\": \"Gujarat\",\n  \"city\": \"Ahmedabad\",\n  \"position\": \"Software Developer\",\n  \"experienced\": 1,\n  \"fresher\": 0,\n  \"expected_salary\": \"800000\",\n  \"job_category\": \"IT\",\n  \"current_location\": \"Ahmedabad\",\n  \"availability_start\": \"2025-01-15\",\n  \"availability_end\": \"2025-12-31\",\n  \"work_experience\": [\n    {\n      \"position\": \"Senior Developer\",\n      \"company\": \"Innovation Labs\",\n      \"start_date\": \"2023-01-01\",\n      \"end_date\": null,\n      \"salary_period\": \"Monthly\",\n      \"is_current\": 1\n    }\n  ],\n  \"skills\": [\n    {\n      \"skill_name\": \"PHP\",\n      \"years_of_experience\": \"5 years\"\n    },\n    {\n      \"skill_name\": \"JavaScript\",\n      \"years_of_experience\": \"4 years\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/candidate-profile",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile"]
+        }
+      }
+    },
+    {
+      "name": "Get Single Profile",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/candidate-profile/{{candidate_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile", "{{candidate_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Get All Profiles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/candidate-profile?page=1&limit=10",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"full_name\": \"John Updated Doe\",\n  \"mobile_number\": \"9876543299\",\n  \"expected_salary\": \"900000\",\n  \"status\": \"Active\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/candidate-profile/{{candidate_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile", "{{candidate_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Delete Profile",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/candidate-profile/{{candidate_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile", "{{candidate_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Upload Profile with Files",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "full_name",
+              "value": "John Doe",
+              "type": "text"
+            },
+            {
+              "key": "email",
+              "value": "john.files@example.com",
+              "type": "text"
+            },
+            {
+              "key": "mobile_number",
+              "value": "9876543210",
+              "type": "text"
+            },
+            {
+              "key": "profile_photo",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "resume",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/candidate-profile",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile"]
+        }
+      }
+    },
+    {
+      "name": "Upload Files (Photo and/or Resume)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "profile_photo",
+              "type": "file",
+              "src": [],
+              "description": "Profile photo (JPG/PNG/GIF - max 2MB) - OPTIONAL"
+            },
+            {
+              "key": "resume",
+              "type": "file",
+              "src": [],
+              "description": "Resume (PDF/DOC/DOCX - max 5MB) - OPTIONAL"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/candidate-profile/{{candidate_id}}/upload",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile", "{{candidate_id}}", "upload"]
+        }
+      }
+    },
+    {
+      "name": "Get Candidate Documents",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/candidate-profile/{{candidate_id}}/documents",
+          "host": ["{{base_url}}"],
+          "path": ["candidate-profile", "{{candidate_id}}", "documents"]
+        }
+      }
+    }
+  ]
+}
